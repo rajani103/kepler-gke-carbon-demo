@@ -158,10 +158,7 @@ Let the workloads run for a few minutes before scene 4, so there is CPU history 
 - **Sampling.** Kepler samples every 5 s, so short windows can show slightly more than 1 core for a
   pod limited to 1 CPU.
 
-## Talk
 
-**Your Container Has a Carbon Bill: Measuring Docker Workloads on GKE with Kepler**
-CNCG Pune, 21 October 2026
 
 ## Author
 

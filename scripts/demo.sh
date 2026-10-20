@@ -7,6 +7,19 @@ Y='\033[1;33m'; N='\033[0m'
 scene()   { clear; echo -e "${Y}== $1 ==${N}"; echo; }
 waitkey() { echo; read -r -n1 -s -p '[press any key]'; }
 
+scene '0. What we created'
+echo '$ gcloud container clusters list'
+gcloud container clusters list --format='table(name,location,currentMasterVersion,currentNodeCount,status)'
+echo; echo '$ kubectl get nodes'
+kubectl get nodes -o custom-columns='NODE:.metadata.name,MACHINE:.metadata.labels.node\.kubernetes\.io/instance-type,OS:.status.nodeInfo.osImage'
+echo; echo '$ helm list -n kepler'
+helm list -n kepler
+echo; echo '$ kubectl get daemonset,service,podmonitoring -n kepler'
+kubectl get daemonset,service,podmonitoring -n kepler
+echo; echo '$ kubectl get deployments,pods -n carbon-demo'
+kubectl get deployments,pods -n carbon-demo
+waitkey
+
 scene '1. Does this GKE node have a power meter?'
 NODE="$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')"
 echo "$ kubectl debug node/$NODE -- ls /host/sys/class/powercap"

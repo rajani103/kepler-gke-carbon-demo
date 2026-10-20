@@ -15,6 +15,7 @@ It also shows the part most demos skip: **on a cloud VM, there is usually no pow
 
 | Scene | What you see |
 |---|---|
+| 0. What we created | Cluster, node, Kepler (Helm), scrape config, and the two workloads |
 | 1. Power meter check | The GKE node has no RAPL (`/sys/class/powercap` is empty) and no hwmon |
 | 2. Kepler installs | Kepler tries `rapl`, then `hwmon`, then falls back to `fake`, and logs it |
 | 3. Same job, two containers | `busy-poller` uses ~1 core, `sleepy-poller` ~0, for the same work |

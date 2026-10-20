@@ -1,0 +1,11 @@
+# Helm values for the Kepler chart (v0.10+ rewrite).
+# Kepler tries the meters in order and uses the first one that reports zones:
+#   rapl  -> real CPU energy counters (bare metal, most laptops/desktops)
+#   hwmon -> hardware monitoring fallback
+#   fake  -> SYNTHETIC readings, for development only
+# On a GKE VM with no RAPL or hwmon, Kepler ends up on "fake". Say so in the demo.
+config:
+  log:
+    level: info
+  cpu:
+    preferredMeters: [rapl, hwmon, fake]

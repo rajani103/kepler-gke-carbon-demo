@@ -1,0 +1,5 @@
+# local scratch
+*.log
+.env
+.DS_Store
+kubeconfig*

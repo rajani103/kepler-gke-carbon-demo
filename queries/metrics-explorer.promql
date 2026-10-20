@@ -1,0 +1,34 @@
+# PromQL for Cloud Monitoring > Metrics Explorer > PromQL (Managed Prometheus).
+# Kepler zones overlap (package includes core): always filter to ONE zone.
+
+# --- Works everywhere: the real signal Kepler attributes energy by ---------
+# CPU cores used per container
+sum by (container_name) (
+  rate(kepler_container_cpu_seconds_total{container_name=~".*-poller"}[5m])
+)
+
+# --- Estimate (cloud VMs without RAPL) -------------------------------------
+# Estimated watts: cores x (4.98 - 1.34) W per vCPU (Cloud Carbon Footprint, GCP average)
+sum by (container_name) (
+  rate(kepler_container_cpu_seconds_total{container_name=~".*-poller"}[5m])
+) * 3.64
+
+# Estimated kg CO2e per year on the asia-south1 grid (598 gCO2e/kWh)
+sum by (container_name) (
+  rate(kepler_container_cpu_seconds_total{container_name=~".*-poller"}[5m])
+) * 3.64 * 8.76 * 0.598
+
+# --- Measured (bare metal / nodes with RAPL) --------------------------------
+# On a node where Kepler reads real RAPL counters, use its own energy metrics.
+# Watts per pod
+sum by (pod_name) (
+  kepler_pod_cpu_watts{pod_namespace="carbon-demo", zone="package"}
+)
+
+# gCO2e per pod over the last 30 minutes (joules / 3.6e6 = kWh, x grid intensity)
+sum by (pod_name) (
+  increase(kepler_pod_cpu_joules_total{pod_namespace="carbon-demo", zone="package"}[30m])
+) / 3.6e6 * 598
+
+# Node: idle vs active watts
+sum by (__name__) ({__name__=~"kepler_node_cpu_(idle|active)_watts", zone="package"})

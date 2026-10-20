@@ -1,0 +1,61 @@
+# Same job, two containers, same Docker image.
+# The job: check a queue for work. Both do the same useful work.
+#   busy-poller   checks as fast as it can, in a tight loop (a common real-world bug)
+#   sleepy-poller checks once a second
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: carbon-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busy-poller
+  namespace: carbon-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: busy-poller}
+  template:
+    metadata:
+      labels: {app: busy-poller}
+    spec:
+      containers:
+        - name: busy-poller
+          image: python:3.12-slim
+          command: ["python", "-u", "-c"]
+          args:
+            - |
+              import hashlib
+              while True:                      # poll as fast as possible
+                  hashlib.sha256(b"queue").hexdigest()
+          resources:
+            requests: {cpu: 100m, memory: 64Mi}
+            limits: {cpu: "1", memory: 128Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleepy-poller
+  namespace: carbon-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: sleepy-poller}
+  template:
+    metadata:
+      labels: {app: sleepy-poller}
+    spec:
+      containers:
+        - name: sleepy-poller
+          image: python:3.12-slim
+          command: ["python", "-u", "-c"]
+          args:
+            - |
+              import hashlib, time
+              while True:                      # poll once a second
+                  hashlib.sha256(b"queue").hexdigest()
+                  time.sleep(1)
+          resources:
+            requests: {cpu: 100m, memory: 64Mi}
+            limits: {cpu: "1", memory: 128Mi}

@@ -1,6 +1,6 @@
 # Your Container Has a Carbon Bill
 
-**Measuring Docker workloads on GKE with Kepler.** This is the demo for my talk at **CNCG Pune (21 October 2026)**.
+**Measuring Docker workloads on GKE with Kepler.** 
 
 Every container burns power, so every container has a carbon cost. Nobody sends us that invoice.
 This repo deploys [Kepler](https://github.com/sustainable-computing-io/kepler) on Google Kubernetes Engine,
